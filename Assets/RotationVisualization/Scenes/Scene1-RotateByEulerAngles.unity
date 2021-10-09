@@ -967,8 +967,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce2afcb8ac616f44db695bca2f755a55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  angleX: 5
-  angleY: 5
+  angleX: 45
+  angleY: 45
   angleZ: 45
 --- !u!4 &1511174560
 Transform:

@@ -115,14 +115,17 @@ namespace RotationVisualization
         
         public void RotateAroundXByQ()
         {
+            transform.Rotate(Vector3.right, angleX, Space.World);
         }
 
         public void RotateAroundYByQ()
         {
+            transform.Rotate(Vector3.up, angleY, Space.World);
         }
 
         public void RotateAroundZByQ()
         {
+            transform.Rotate(Vector3.forward, angleZ, Space.World);
         }
     }
 }
