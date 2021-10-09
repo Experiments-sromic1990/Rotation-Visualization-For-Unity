@@ -8,8 +8,13 @@ namespace RotationVisualization
 {
     public class Rotation : MonoBehaviour
     {
-        [SerializeField] private float rotationAngle = 45;
-        [SerializeField] private Axis rotationAxis = Axis.Y;
+        [SerializeField] private float angleX = 45;
+        [SerializeField] private float angleY = 45;
+        [SerializeField] private float angleZ = 45;
+
+        private Matrix4x4 _rotateX;
+        private Matrix4x4 _rotateY;
+        private Matrix4x4 _rotateZ;
         
         private List<AngleViewBase> _angleViews;
 
@@ -17,69 +22,107 @@ namespace RotationVisualization
         {
             _angleViews = Resources.FindObjectsOfTypeAll<AngleViewBase>().ToList();
         }
-        
-        private IEnumerator Start()
-        {
-            yield return new WaitForSeconds(1f);
-            transform.position = Rotate(rotationAngle, rotationAxis);
-        }
 
-        private Vector3 Rotate(float angle, Axis axis)
-        {
-            Vector3 initialPos = transform.position;
-            Vector3 position = RotateAccordingToAxis(initialPos, angle, axis);
-            UpdateView(initialPos, position);
-            return position;
-        }
-
-        private Vector3 RotateAccordingToAxis(Vector3 initialPos, float angle, Axis axis)
-        {
-            Vector3 position = initialPos;
-            float posX = position.x;
-            float posY = position.y;
-            float posZ = position.z;
-            
-            switch (axis)
-            {
-                case Axis.X:
-                    posX = initialPos.x;
-                    posY = initialPos.y * Mathf.Cos(angle * Mathf.Rad2Deg) + initialPos.z * -Mathf.Sin(angle * Mathf.Rad2Deg);
-                    posZ = initialPos.y * Mathf.Sin(angle * Mathf.Rad2Deg) + initialPos.z * Mathf.Cos(angle * Mathf.Rad2Deg);
-                    break;
-                case Axis.Y:
-                    posX = initialPos.x * Mathf.Cos(angle * Mathf.Rad2Deg) + initialPos.z * Mathf.Sin(angle * Mathf.Rad2Deg);
-                    posY = initialPos.y;
-                    posZ = initialPos.x * -Mathf.Sin(angle * Mathf.Rad2Deg) + initialPos.z * Mathf.Cos(angle * Mathf.Rad2Deg);
-                    break;
-                case Axis.Z:
-                    posX = initialPos.x * Mathf.Cos(angle * Mathf.Rad2Deg) + initialPos.y * -Mathf.Sin(angle * Mathf.Rad2Deg);
-                    posY = initialPos.x * Mathf.Sin(angle * Mathf.Rad2Deg) + initialPos.y * Mathf.Cos(angle * Mathf.Rad2Deg);
-                    posZ = initialPos.z;
-                    break;
-            }
-            
-            position = new Vector3(posX, posY, posZ);
-            return position;
-        }
 
         private void UpdateView(Vector3 startPosition, Vector3 position)
         {
             foreach (var angleView in _angleViews)
             {
-                angleView.OnAngleChanged?.Invoke(rotationAngle);
+                // angleView.OnAngleChanged?.Invoke(rotationAngle);
             }
         }
-
-        private void Update()
-        {
         
-        }
-    }
 
-    public enum Axis
-    {
-        X,
-        Y,
-        Z
+        public void ResetRotation()
+        {
+            this.transform.rotation = Quaternion.identity;
+        }
+
+        public void RotateAroundX()
+        {
+            float angle = Mathf.Deg2Rad * angleX;
+            _rotateX = new Matrix4x4
+            {
+                m00 = 1,
+                m01 = 0,
+                m02 = 0,
+                m03 = 0,
+                m10 = 0,
+                m11 = Mathf.Cos(angle),
+                m12 = -Mathf.Sin(angle),
+                m13 = 0,
+                m20 = 0,
+                m21 = Mathf.Sin(angle),
+                m22 = Mathf.Cos(angle),
+                m23 = 0,
+                m30 = 0,
+                m31 = 0,
+                m32 = 0,
+                m33 = 1
+            };
+            transform.forward = _rotateX.MultiplyVector(transform.forward);
+        }
+
+        public void RotateAroundY()
+        {
+            float angle = Mathf.Deg2Rad * angleY;
+            _rotateY = new Matrix4x4
+            {
+                m00 = Mathf.Cos(angle),
+                m01 = 0,
+                m02 = Mathf.Sin(angle),
+                m03 = 0,
+                m10 = 0,
+                m11 = 1,
+                m12 = 0,
+                m13 = 0,
+                m20 = -Mathf.Sin(angle),
+                m21 = 0,
+                m22 = Mathf.Cos(angle),
+                m23 = 0,
+                m30 = 0,
+                m31 = 0,
+                m32 = 0,
+                m33 = 1
+            };
+            transform.forward = _rotateY.MultiplyVector(transform.forward);
+        }
+
+        public void RotateAroundZ()
+        {
+            float angle = Mathf.Deg2Rad * angleZ;
+            _rotateZ = new Matrix4x4
+            {
+                m00 = Mathf.Cos(angle),
+                m01 = -Mathf.Sin(angle),
+                m02 = 0,
+                m03 = 0,
+                m10 = Mathf.Sin(angle),
+                m11 = Mathf.Cos(angle),
+                m12 = 0,
+                m13 = 0,
+                m20 = 0,
+                m21 = 0,
+                m22 = 1,
+                m23 = 0,
+                m30 = 0,
+                m31 = 0,
+                m32 = 0,
+                m33 = 1
+            };
+            transform.forward = _rotateZ.MultiplyVector(transform.forward);
+        }
+        
+        public void RotateAroundXByQ()
+        {
+        }
+
+        public void RotateAroundYByQ()
+        {
+        }
+
+        public void RotateAroundZByQ()
+        {
+        }
     }
 }
